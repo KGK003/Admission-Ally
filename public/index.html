@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Ally</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // EMERGENCY MAP FIX - JUST SHOWS NYC MAP
+    document.addEventListener("DOMContentLoaded", function() {
+        const map = L.map('map').setView([40.7128, -74.0060], 13); // NYC coordinates
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.marker([40.7128, -74.0060]).addTo(map).bindPopup("Default Location").openPopup();
+    });
+</script>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page">
+        <div class="landing-content">
+            <h1><i class="fas fa-graduation-cap"></i> Admission Ally</h1>
+            <p>Your smart college application companion</p>
+            <div class="auth-buttons">
+                <button id="landingLoginBtn">Login</button>
+                <p>Don't have an account? <a href="#" id="landingSignupLink">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+    <div id="map"></div>
+    <!-- Auth Modal -->
+    <div id="authContainer">
+        <div id="authForm">
+            <button id="closeAuthBtn"><i class="fas fa-times"></i></button>
+            <h2 id="formTitle">Login</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="auth-submit-btn">Login</button>
+            </form>
+            
+            <form id="signupForm" style="display: none;">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="auth-submit-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <header>
+            <h1><i class="fas fa-graduation-cap"></i> Admission Ally</h1>
+            <nav>
+                <span id="userEmail" class="user-email-display"></span>
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">0</span>
+                </div>
+                <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </nav>
+        </header>
+        
+        <div class="dashboard-container">
+            <!-- Profile Section -->
+            <section class="dashboard-section" id="profile-section">
+                <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+                <div class="profile-info">
+                    <div class="profile-field">
+                        <label>Field of Interest:</label>
+                        <select id="userInterest">
+                            <option value="">Select interest</option>
+                            <option value="52">Business & Management</option>
+                            <option value="14">Engineering</option>
+                            <option value="11">Computer Science</option>
+                        </select>
+                    </div>
+                    <div class="profile-field">
+                        <label>Preferred Location:</label>
+                        <input type="text" id="locationPreference" list="states" placeholder="Type state (e.g., NY)">
+                        <datalist id="states">
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </datalist>
+                    </div>
+                    <button id="saveProfileBtn">Save Profile</button>
+                </div>
+            </section>
+
+            <!-- Applications Section -->
+            <section class="dashboard-section">
+                <h2><i class="fas fa-tasks"></i> My Applications</h2>
+                <div class="add-application">
+                    <input type="text" id="newAppName" placeholder="School name">
+                    <select id="newAppStatus">
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="submitted">Submitted</option>
+                    </select>
+                    <button id="addAppBtn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <ul id="applicationsList"></ul>
+            </section>
+            
+            <!-- Recommendations Section -->
+            <section class="dashboard-section">
+                <h2><i class="fas fa-school"></i> Recommended Colleges</h2>
+                <div class="recommendation-filters">
+                    <select id="studyField">
+                        <option value="">All Fields</option>
+                        <option value="52">Business</option>
+                        <option value="14">Engineering</option>
+                    </select>
+                    <input type="text" id="searchLocation" list="states" placeholder="Type state (e.g., NY)">
+                    <datalist id="states">
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </datalist>
+                    <button id="searchCollegesBtn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div id="recommendedColleges"></div>
+            </section>
+            
+            <!-- Map Section -->
+            <section class="dashboard-section">
+                <h2><i class="fas fa-map-marked-alt"></i> Nearby Colleges</h2>
+                <div id="map"></div>
+                <p id="locationStatus"><i class="fas fa-info-circle"></i> Loading location...</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
